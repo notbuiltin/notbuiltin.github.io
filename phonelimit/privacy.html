@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy — PhoneLimit</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080B12;
+      --surface:  #131B28;
+      --border:   rgba(255,255,255,0.08);
+      --accent:   #E87070;
+      --accent2:  #c05050;
+      --white:    #EFF3F8;
+      --gray:     #8896A8;
+      --light:    #C0CBD8;
+      --radius:   12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.7;
+      padding: 0 16px 64px;
+    }
+
+    header {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .logo svg { width: 24px; height: 24px; }
+
+    header h1 { font-size: 1.4rem; font-weight: 700; }
+    header p  { font-size: 0.82rem; color: var(--gray); margin-top: 2px; }
+
+    main {
+      max-width: 760px;
+      margin: 40px auto 0;
+    }
+
+    .meta {
+      font-size: 0.82rem;
+      color: var(--gray);
+      margin-bottom: 36px;
+    }
+    .meta span { color: var(--accent); }
+
+    h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 36px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    p { color: var(--light); margin-bottom: 12px; font-size: 0.95rem; }
+
+    ul {
+      list-style: none;
+      margin: 0 0 12px;
+      padding: 0;
+    }
+    ul li {
+      color: var(--light);
+      font-size: 0.95rem;
+      padding: 4px 0 4px 20px;
+      position: relative;
+    }
+    ul li::before {
+      content: "▸";
+      position: absolute; left: 0;
+      color: var(--accent);
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin: 16px 0;
+    }
+    .card-title { font-weight: 700; color: var(--white); margin-bottom: 8px; font-size: 0.95rem; }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .highlight {
+      border-left: 3px solid var(--accent);
+      padding: 12px 16px;
+      background: rgba(232,112,112,0.06);
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+    }
+    .highlight p { margin: 0; }
+
+    footer {
+      max-width: 760px;
+      margin: 56px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--gray);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer a { color: var(--gray); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+  </div>
+  <div>
+    <h1>PhoneLimit</h1>
+    <p>Privacy Policy</p>
+  </div>
+</header>
+
+<main>
+  <p class="meta">Last updated: <span>June 6, 2026</span> &nbsp;·&nbsp; Version 1.0</p>
+
+  <div class="highlight">
+    <p>PhoneLimit respects your privacy. This policy explains what data the app collects, why, and how it is protected.</p>
+  </div>
+
+  <!-- 1 -->
+  <h2>1. About the App</h2>
+  <p>PhoneLimit is a digital wellbeing app for Android that tracks screen time and helps you manage your app usage habits. It is published on the Google Play Store under the package name <strong>app.phonelimit</strong>.</p>
+
+  <!-- 2 -->
+  <h2>2. Data We Collect</h2>
+
+  <div class="card">
+    <div class="card-title">Processed on your device (never sent to the cloud)</div>
+    <ul>
+      <li>App usage statistics (which app is used and for how long)</li>
+      <li>Daily / weekly screen time summaries</li>
+      <li>The app time limits you set</li>
+      <li>Family mode pattern lock (stored as a SHA-256 hash — never as plain text)</li>
+      <li>Backup PIN (stored as a SHA-256 hash)</li>
+      <li>Streak calendar data (your daily goal completion history)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Sent to the cloud (Firebase)</div>
+    <ul>
+      <li><strong>Firebase Authentication:</strong> email address and secure authentication (for the friends and family mode features)</li>
+      <li><strong>Firestore:</strong> friendship connections, invite codes, and profile info shared with your friends — display name, weekly average screen time, category breakdown (social / entertainment / finance / other), streak, and, if you enable app sharing, your most-used apps</li>
+      <li><strong>Firebase Analytics:</strong> anonymous app usage events (which screens are viewed)</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Purchase data</div>
+    <ul>
+      <li>Pro and AI+ subscription status is managed by Google Play</li>
+      <li>Payment details are never seen or stored by PhoneLimit</li>
+      <li>Subscription status is only cached locally on your device</li>
+    </ul>
+  </div>
+
+  <!-- 3 -->
+  <h2>3. How We Use Your Data</h2>
+  <ul>
+    <li>Tracking screen time and showing statistics</li>
+    <li>Running the app blocking feature</li>
+    <li>Friend leaderboard and social features</li>
+    <li>Family mode access control</li>
+    <li>Verifying subscription status</li>
+  </ul>
+
+  <!-- 4 -->
+  <h2>4. Third-Party Services</h2>
+  <p>PhoneLimit uses the following Google services, each governed by its own privacy policy:</p>
+  <ul>
+    <li><a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase (Authentication, Firestore, Analytics)</a></li>
+    <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Play Billing</a></li>
+  </ul>
+
+  <!-- 5 -->
+  <h2>5. Data Security</h2>
+  <ul>
+    <li>All network traffic is encrypted with HTTPS; plain HTTP is not allowed</li>
+    <li>Sensitive local data (pattern lock, PIN) is stored hashed with SHA-256</li>
+    <li>Android DataStore is excluded from backups (<code>allowBackup="false"</code>)</li>
+    <li>The release build is obfuscated with ProGuard/R8</li>
+  </ul>
+
+  <!-- 6 -->
+  <h2>6. Permissions and Why We Need Them</h2>
+
+  <div class="card">
+    <div class="card-title">PACKAGE_USAGE_STATS</div>
+    <p style="margin:0;color:var(--light);font-size:0.9rem;">Required to measure how much time you spend in each app. The detailed data is processed on your device; only aggregated summaries (weekly average, category breakdown, most-used apps) are shared if you use the friends feature.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">SYSTEM_ALERT_WINDOW</div>
+    <p style="margin:0;color:var(--light);font-size:0.9rem;">Needed to show a block screen over an app when its time limit is reached.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">FOREGROUND_SERVICE / POST_NOTIFICATIONS</div>
+    <p style="margin:0;color:var(--light);font-size:0.9rem;">Needed so time tracking runs reliably in the background and notifications can be sent.</p>
+  </div>
+  <div class="card">
+    <div class="card-title">REQUEST_IGNORE_BATTERY_OPTIMIZATIONS</div>
+    <p style="margin:0;color:var(--light);font-size:0.9rem;">Keeps the tracking service from being throttled by battery limits, for accurate measurement.</p>
+  </div>
+
+  <!-- 7 -->
+  <h2>7. Children's Privacy</h2>
+  <p>PhoneLimit is not directed at children under 13. The Family Mode feature is designed for parents to manage their child's device; no personal data about children is collected in this process.</p>
+
+  <!-- 8 -->
+  <h2>8. Your Rights Over Your Data</h2>
+  <ul>
+    <li><strong>Account deletion:</strong> you can request permanent deletion of your Firebase account and Firestore data at any time — see <a href="delete-account.html">Account &amp; Data Deletion</a></li>
+    <li><strong>Local data deletion:</strong> all local data is automatically removed when you uninstall the app</li>
+    <li><strong>Data access:</strong> contact us to find out what data is held about you</li>
+  </ul>
+
+  <!-- 9 -->
+  <h2>9. Changes to This Policy</h2>
+  <p>When this policy is updated, the new version is published on this page. You will be notified in the app for significant changes.</p>
+
+  <!-- 10 -->
+  <h2>10. Contact</h2>
+  <p>For questions and requests:</p>
+  <ul>
+    <li>Email: <a href="mailto:notbuiltin@gmail.com">notbuiltin@gmail.com</a></li>
+    <li>This page: <a href="https://notbuiltin.github.io/phonelimit/privacy.html">notbuiltin.github.io/phonelimit/privacy.html</a></li>
+  </ul>
+</main>
+
+<footer>
+  <span>© 2026 PhoneLimit</span>
+  <span>
+    <a href="index.html">Home</a> &nbsp;·&nbsp;
+    <a href="terms.html">Terms of Use</a>
+  </span>
+</footer>
+
+</body>
+</html>

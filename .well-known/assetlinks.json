@@ -1,0 +1,12 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "app.phonelimit",
+    "sha256_cert_fingerprints": [
+      "8E:FA:22:E1:F8:8E:0C:EB:C2:18:40:5F:7C:3C:8E:59:B6:DE:F2:A1:88:4A:C2:BD:3A:C5:D9:20:B6:4B:7B:34",
+      "0D:9F:FE:46:F4:A0:1F:DD:AF:F4:9D:6E:68:85:3E:A1:8C:F5:82:E7:83:78:64:D0:12:72:D8:95:43:96:49:46",
+      "75:27:C6:5C:38:86:39:29:F9:15:9F:AE:48:7C:47:09:13:A4:F9:84:E4:71:00:B1:0A:85:1C:2B:D0:06:F5:EC"
+    ]
+  }
+}]

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Delete Your Account — PhoneLimit</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #080B12;
+      --surface:  #131B28;
+      --border:   rgba(255,255,255,0.08);
+      --accent:   #E87070;
+      --accent2:  #c05050;
+      --white:    #EFF3F8;
+      --gray:     #8896A8;
+      --light:    #C0CBD8;
+      --radius:   12px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.7;
+      padding: 0 16px 64px;
+    }
+
+    header {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 48px 0 32px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff;
+      flex-shrink: 0;
+    }
+    .logo svg { width: 24px; height: 24px; }
+
+    header h1 { font-size: 1.4rem; font-weight: 700; }
+    header p  { font-size: 0.82rem; color: var(--gray); margin-top: 2px; }
+
+    main { max-width: 760px; margin: 40px auto 0; }
+
+    .meta { font-size: 0.82rem; color: var(--gray); margin-bottom: 36px; }
+    .meta span { color: var(--accent); }
+
+    h2 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--accent);
+      margin: 36px 0 12px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    p { color: var(--light); margin-bottom: 12px; font-size: 0.95rem; }
+
+    ul { list-style: none; margin: 0 0 12px; padding: 0; }
+    ul li {
+      color: var(--light);
+      font-size: 0.95rem;
+      padding: 4px 0 4px 20px;
+      position: relative;
+    }
+    ul li::before {
+      content: "▸";
+      position: absolute; left: 0;
+      color: var(--accent);
+    }
+
+    ol { margin: 0 0 12px 20px; }
+    ol li { color: var(--light); font-size: 0.95rem; padding: 4px 0; }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      margin: 16px 0;
+    }
+    .card-title { font-weight: 700; color: var(--white); margin-bottom: 8px; font-size: 0.95rem; }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .highlight {
+      border-left: 3px solid var(--accent);
+      padding: 12px 16px;
+      background: rgba(232,112,112,0.06);
+      border-radius: 0 8px 8px 0;
+      margin: 16px 0;
+    }
+    .highlight p { margin: 0; }
+
+    .btn {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+      color: #fff;
+      font-weight: 700;
+      padding: 12px 22px;
+      border-radius: 10px;
+      margin: 8px 0;
+    }
+    .btn:hover { text-decoration: none; opacity: 0.92; }
+
+    footer {
+      max-width: 760px;
+      margin: 56px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      font-size: 0.82rem;
+      color: var(--gray);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    footer a { color: var(--gray); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+  </div>
+  <div>
+    <h1>PhoneLimit</h1>
+    <p>Account &amp; Data Deletion</p>
+  </div>
+</header>
+
+<main>
+  <p class="meta">Last updated: <span>July 13, 2026</span></p>
+
+  <div class="highlight">
+    <p>This page explains how to request deletion of your PhoneLimit account and all associated data. The app is published on Google Play under the package name <strong>app.phonelimit</strong>.</p>
+  </div>
+
+  <h2>How to request deletion</h2>
+  <p>PhoneLimit uses Firebase Authentication and Firestore for its friends feature. To permanently delete your account and the data linked to it, send us an email:</p>
+
+  <div class="card">
+    <div class="card-title">Send a deletion request</div>
+    <ol>
+      <li>Email <a href="mailto:notbuiltin@gmail.com?subject=Delete%20my%20PhoneLimit%20account">notbuiltin@gmail.com</a></li>
+      <li>Use the subject line <strong>“Delete my PhoneLimit account”</strong></li>
+      <li>Include the email address you used inside the app (for the friends / family mode feature) so we can locate your data</li>
+    </ol>
+    <a class="btn" href="mailto:notbuiltin@gmail.com?subject=Delete%20my%20PhoneLimit%20account">Email a deletion request</a>
+  </div>
+
+  <p>We process deletion requests within <strong>30 days</strong> and will confirm by email once completed.</p>
+
+  <h2>What gets deleted</h2>
+  <ul>
+    <li>Your Firebase Authentication account (the email/anonymous identity created by the app)</li>
+    <li>Your Firestore profile (display name, weekly average screen time, category breakdown, streak, and shared app list)</li>
+    <li>Your friendship connections and any invite codes you generated</li>
+  </ul>
+
+  <h2>What stays on your device</h2>
+  <p>Some data never leaves your phone and is therefore not stored on our servers. It is removed automatically when you uninstall the app:</p>
+  <ul>
+    <li>Detailed app usage statistics and screen time history</li>
+    <li>The app time limits you set</li>
+    <li>Family mode pattern lock and backup PIN (stored only as SHA-256 hashes)</li>
+    <li>Streak calendar history</li>
+  </ul>
+
+  <h2>Questions</h2>
+  <p>For anything related to your data, contact <a href="mailto:notbuiltin@gmail.com">notbuiltin@gmail.com</a>. See also our <a href="privacy.html">Privacy Policy</a>.</p>
+</main>
+
+<footer>
+  <span>© 2026 PhoneLimit</span>
+  <a href="privacy.html">Privacy</a>
+</footer>
+
+</body>
+</html>

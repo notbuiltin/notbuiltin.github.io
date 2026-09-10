@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>You're invited to PhoneLimit</title>
+  <meta name="description" content="A friend invited you to PhoneLimit. Compare screen time and keep each other on track." />
+  <meta property="og:title" content="You're invited to PhoneLimit" />
+  <meta property="og:description" content="A friend invited you. Compare screen time and keep each other on track." />
+  <meta property="og:image" content="https://notbuiltin.github.io/phonelimit/logo.webp" />
+  <link rel="icon" href="icon.webp" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --coral: #E87070; --coral2: #FF9090;
+      --bg: #080B12; --surface: #131B28;
+      --border: rgba(255,255,255,0.07);
+      --white: #EFF3F8; --gray: #8896A8; --light: #C0CBD8;
+      --green: #2E9E5B;
+    }
+    body {
+      background: var(--bg); color: var(--white); min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+      display: flex; align-items: center; justify-content: center; padding: 32px 20px;
+    }
+    .card {
+      width: 100%; max-width: 420px; text-align: center;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 36px 28px;
+    }
+    .logo { width: 72px; height: 72px; border-radius: 18px; object-fit: contain; }
+    h1 { margin-top: 18px; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.4px; line-height: 1.25; }
+    .lead { margin-top: 8px; color: var(--light); }
+    .code {
+      margin: 26px 0 10px; padding: 16px; border-radius: 14px; background: var(--bg);
+      border: 1px dashed rgba(232,112,112,0.5);
+      font-size: 1.9rem; font-weight: 800; letter-spacing: 6px; color: var(--coral2);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    .btn {
+      display: block; width: 100%; margin-top: 12px; padding: 14px 18px; border-radius: 14px;
+      font-size: 1rem; font-weight: 700; text-decoration: none; cursor: pointer; border: none;
+    }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-secondary { background: transparent; color: var(--light); border: 1px solid var(--border); }
+    .steps { margin-top: 26px; text-align: left; color: var(--gray); font-size: 0.92rem; }
+    .steps li { margin: 6px 0 6px 20px; }
+    .foot { margin-top: 24px; font-size: 0.8rem; color: var(--gray); }
+    .foot a { color: var(--gray); }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <img class="logo" src="icon.webp" alt="PhoneLimit" />
+    <h1 id="title">You're invited to PhoneLimit</h1>
+    <p class="lead" id="lead">A friend wants to compare screen time with you and keep each other on track.</p>
+
+    <div id="withCode" hidden>
+      <div class="code" id="code"></div>
+      <button class="btn btn-secondary" id="copy" type="button">Copy code</button>
+    </div>
+
+    <a class="btn btn-primary" id="open" href="#" hidden>Open in PhoneLimit</a>
+    <a class="btn btn-primary" id="play" href="https://play.google.com/store/apps/details?id=app.phonelimit">Get PhoneLimit on Google Play</a>
+
+    <ol class="steps" id="steps">
+      <li id="s1">Install PhoneLimit from Google Play.</li>
+      <li id="s2">Open the app and go to Friends → Enter Code.</li>
+      <li id="s3">Enter the code above to add your friend.</li>
+    </ol>
+
+    <p class="foot"><a href="./" id="home">About PhoneLimit</a> · <a href="privacy.html" id="privacy">Privacy</a></p>
+  </main>
+
+  <script>
+    (function () {
+      var PLAY = "https://play.google.com/store/apps/details?id=app.phonelimit";
+      var tr = (navigator.language || "").toLowerCase().indexOf("tr") === 0;
+      var t = tr ? {
+        title: "PhoneLimit'e davet edildin",
+        lead: "Bir arkadaşın ekran süresini seninle karşılaştırmak ve birbirinize destek olmak istiyor.",
+        copy: "Kodu kopyala", copied: "Kopyalandı ✓",
+        open: "PhoneLimit'te aç", play: "Google Play'den PhoneLimit'i indir",
+        s1: "PhoneLimit'i Google Play'den yükle.",
+        s2: "Uygulamayı aç, Arkadaşlar → Kod Gir bölümüne git.",
+        s3: "Yukarıdaki kodu girerek arkadaşını ekle.",
+        home: "PhoneLimit hakkında", privacy: "Gizlilik", lang: "tr"
+      } : {
+        copy: "Copy code", copied: "Copied ✓",
+        open: "Open in PhoneLimit", play: "Get PhoneLimit on Google Play", lang: "en"
+      };
+      document.documentElement.lang = t.lang;
+      ["title", "lead", "s1", "s2", "s3", "home", "privacy"].forEach(function (id) {
+        if (t[id]) document.getElementById(id).textContent = t[id];
+      });
+      document.getElementById("play").textContent = t.play;
+
+      var code = new URLSearchParams(location.search).get("code") || "";
+      if (!/^[A-Z2-9]{8}$/.test(code)) {
+        document.getElementById("s3").hidden = true;
+        return;
+      }
+      document.getElementById("withCode").hidden = false;
+      document.getElementById("code").textContent = code;
+
+      var copy = document.getElementById("copy");
+      copy.textContent = t.copy;
+      copy.addEventListener("click", function () {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(code).then(function () { copy.textContent = t.copied; });
+        }
+      });
+
+      // Reached this page even though the app may be installed (e.g. opened in an
+      // in-app browser that skips App Links): hand off via the app's custom scheme,
+      // falling back to the Play Store when it isn't installed.
+      if (/android/i.test(navigator.userAgent)) {
+        var open = document.getElementById("open");
+        open.href = "intent://invite?code=" + code +
+          "#Intent;scheme=phonelimit;package=app.phonelimit;S.browser_fallback_url=" +
+          encodeURIComponent(PLAY) + ";end";
+        open.textContent = t.open;
+        open.hidden = false;
+        document.getElementById("play").className = "btn btn-secondary";
+      }
+    })();
+  </script>
+</body>
+</html>
