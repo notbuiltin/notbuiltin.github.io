@@ -64,6 +64,7 @@
 
     <a class="btn btn-primary" id="open" href="#" hidden>Open in PhoneLimit</a>
     <a class="btn btn-primary" id="play" href="https://play.google.com/store/apps/details?id=app.phonelimit">Get PhoneLimit on Google Play</a>
+    <a class="btn btn-secondary" id="site" href="./">Discover PhoneLimit</a>
 
     <ol class="steps" id="steps">
       <li id="s1">Install PhoneLimit from Google Play.</li>
@@ -71,7 +72,7 @@
       <li id="s3">Enter the code above to add your friend.</li>
     </ol>
 
-    <p class="foot"><a href="./" id="home">About PhoneLimit</a> · <a href="privacy.html" id="privacy">Privacy</a></p>
+    <p class="foot"><a href="privacy.html" id="privacy">Privacy</a></p>
   </main>
 
   <script>
@@ -86,13 +87,13 @@
         s1: "PhoneLimit'i Google Play'den yükle.",
         s2: "Uygulamayı aç, Arkadaşlar → Kod Gir bölümüne git.",
         s3: "Yukarıdaki kodu girerek arkadaşını ekle.",
-        home: "PhoneLimit hakkında", privacy: "Gizlilik", lang: "tr"
+        site: "PhoneLimit'i keşfet", privacy: "Gizlilik", lang: "tr"
       } : {
         copy: "Copy code", copied: "Copied ✓",
         open: "Open in PhoneLimit", play: "Get PhoneLimit on Google Play", lang: "en"
       };
       document.documentElement.lang = t.lang;
-      ["title", "lead", "s1", "s2", "s3", "home", "privacy"].forEach(function (id) {
+      ["title", "lead", "s1", "s2", "s3", "site", "privacy"].forEach(function (id) {
         if (t[id]) document.getElementById(id).textContent = t[id];
       });
       document.getElementById("play").textContent = t.play;
