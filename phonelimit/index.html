@@ -27,6 +27,7 @@
 
     html { scroll-behavior: smooth; }
 
+    html, body { overflow-x: hidden; }
     body {
       background: var(--bg);
       color: var(--white);
@@ -36,6 +37,7 @@
     }
 
     /* ── NAV ── */
+    section, footer, .cta-banner-wrap { position: relative; z-index: 1; }
     nav {
       position: sticky; top: 0; z-index: 100;
       background: rgba(8,11,18,0.85);
@@ -73,6 +75,88 @@
     .nav-btn:hover { opacity: 0.85; }
 
     /* ── HERO ── */
+    /* Sinematik açılış: kum akan video tam ekran, başlık saatin üstünde */
+    .stage {
+      position: relative; min-height: 100svh;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding: 88px 24px 48px; overflow: hidden;
+    }
+    .stage-video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      object-fit: cover; object-position: center top;
+      /* Saat başlığın altında kalsın diye kare biraz aşağı kaydırılıp büyütülüyor */
+      transform: translateY(13%) scale(1.28);
+      -webkit-mask-image: linear-gradient(to bottom, #000 34%, rgba(0,0,0,0.5) 62%, transparent 80%);
+      mask-image: linear-gradient(to bottom, #000 34%, rgba(0,0,0,0.5) 62%, transparent 80%);
+      z-index: 0;
+    }
+    /* Videonun üstünü ve altını sayfaya eritir; başlık her zaman okunur kalır */
+    .stage::after {
+      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+      background:
+        linear-gradient(to bottom, rgba(8,11,18,0.92) 0%, rgba(8,11,18,0.35) 28%,
+                        rgba(8,11,18,0.08) 52%, rgba(8,11,18,0.2) 88%, rgba(8,11,18,0.35) 100%);
+    }
+    .stage > .stage-inner { position: relative; z-index: 2; width: 100%; }
+    .stage-title {
+      font-size: clamp(2.8rem, 11vw, 7.5rem);
+      font-weight: 900; letter-spacing: clamp(-2px, -0.4vw, 2px);
+      line-height: 1; margin: 0;
+      background: linear-gradient(180deg, #FFFFFF 0%, var(--light) 55%, var(--blue) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      text-shadow: 0 0 60px rgba(232,112,112,0.25);
+    }
+    .stage-tagline {
+      margin: 14px auto 0; max-width: 520px;
+      color: var(--light); font-size: clamp(0.95rem, 2.2vw, 1.15rem); line-height: 1.6;
+    }
+    .stage-cta { margin-top: auto; padding-top: 40px; }
+    .stage-scroll {
+      display: block; margin-top: 18px; color: var(--gray);
+      font-size: 0.82rem; text-decoration: none;
+    }
+
+    /* Sayfanın tamamında aşağı akan zaman: partikül videosu + toz tanecikleri */
+    .flow-layer {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .flow-layer video {
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0.22; mix-blend-mode: screen;
+    }
+    .dust { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+    .dust span {
+      position: absolute; top: -12vh; border-radius: 50%;
+      background: var(--coral2); opacity: 0;
+      animation: dustfall linear infinite;
+    }
+    @keyframes dustfall {
+      0%   { transform: translateY(0) translateX(0); opacity: 0; }
+      10%  { opacity: var(--peak); }
+      90%  { opacity: var(--peak); }
+      100% { transform: translateY(125vh) translateX(var(--drift)); opacity: 0; }
+    }
+    /* Hareket hassasiyeti olan kullanıcıda video ve toz durur */
+    @media (prefers-reduced-motion: reduce) {
+      .flow-layer, .dust { display: none; }
+      .stage-video { display: none; }
+      .stage { background: url(hero-poster.webp) center/cover; }
+    }
+
+    @media (max-width: 760px) {
+      .stage {
+        min-height: 92svh; padding-top: 72px;
+        background: linear-gradient(to bottom, var(--bg) 0%, #060D18 12%, #060D18 88%, var(--bg) 100%);
+      }
+      .stage-video {
+        object-fit: contain; object-position: center 58%;
+        transform: scale(1.5);
+        -webkit-mask-image: none; mask-image: none;
+      }
+      .stage-tagline { font-size: 0.95rem; }
+    }
+
     .hero {
       max-width: 1040px; margin: 0 auto;
       padding: 100px 24px 80px;
@@ -87,7 +171,7 @@
       padding: 5px 14px; font-size: 0.78rem; font-weight: 600;
       margin-bottom: 28px;
     }
-    .hero-text h1 {
+    .hero-text h2 {
       font-size: clamp(2.2rem, 4.5vw, 3.4rem);
       font-weight: 900; line-height: 1.1;
       letter-spacing: -1px;
@@ -347,11 +431,36 @@
   </div>
 </nav>
 
+<!-- AKAN ZAMAN KATMANLARI (tüm sayfa) -->
+<div class="flow-layer" aria-hidden="true">
+  <video autoplay muted loop playsinline preload="metadata">
+    <source src="flow-stream.mp4" type="video/mp4" />
+  </video>
+</div>
+<div class="dust" id="dust" aria-hidden="true"></div>
+
+<!-- SİNEMATİK AÇILIŞ -->
+<section class="stage">
+  <video class="stage-video" autoplay muted loop playsinline preload="metadata" poster="hero-poster.webp">
+    <source src="hero-sand.mp4" type="video/mp4" />
+  </video>
+  <div class="stage-inner">
+    <h1 class="stage-title">PhoneLimit</h1>
+    <p class="stage-tagline">Your time is running. Decide how you spend it — before you open the app.</p>
+  </div>
+  <div class="stage-inner stage-cta">
+    <a href="https://play.google.com/store/apps/details?id=app.phonelimit" class="btn-primary">
+      Get it on Google Play
+    </a>
+    <a href="#features" class="stage-scroll">See how it works ↓</a>
+  </div>
+</section>
+
 <!-- HERO -->
 <section class="hero">
   <div class="hero-text">
     <div class="badge">Free for Android</div>
-    <h1>Take <span class="grad-text">real</span> control of your screen time</h1>
+    <h2>Take <span class="grad-text">real</span> control of your screen time</h2>
     <p>See where your hours actually go, set limits that stick, and block the apps that pull you in. Your data never leaves your phone.</p>
     <div class="cta-group">
       <a href="https://play.google.com/store/apps/details?id=app.phonelimit" class="btn-primary">
@@ -537,6 +646,27 @@
 </footer>
 
   <script>
+    // Sayfanın tamamında aşağı süzülen toz — işaretlemeyi şişirmemek için burada üretiliyor.
+    (function () {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var host = document.getElementById("dust");
+      var colors = ["#FF9090", "#E87070", "#AECFDF", "#C0CBD8"];
+      var frag = document.createDocumentFragment();
+      for (var i = 0; i < 40; i++) {
+        var d = document.createElement("span");
+        var size = 1 + Math.random() * 2.6;
+        d.style.left = (Math.random() * 100).toFixed(2) + "vw";
+        d.style.width = d.style.height = size.toFixed(2) + "px";
+        d.style.background = colors[i % colors.length];
+        d.style.animationDuration = (14 + Math.random() * 22).toFixed(1) + "s";
+        d.style.animationDelay = "-" + (Math.random() * 30).toFixed(1) + "s";
+        d.style.setProperty("--peak", (0.15 + Math.random() * 0.4).toFixed(2));
+        d.style.setProperty("--drift", (Math.random() * 60 - 30).toFixed(0) + "px");
+        frag.appendChild(d);
+      }
+      host.appendChild(frag);
+    })();
+
     // Fiyatı ziyaretçinin diline göre göster: Türkiye dışındaki kimse TL tutarını
     // görmesin (Play zaten herkese kendi ülkesinin fiyatını gösteriyor).
     (function () {
