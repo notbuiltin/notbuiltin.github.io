@@ -82,11 +82,18 @@
       text-align: center; padding: 88px 24px 48px; overflow: hidden;
     }
     .stage-object {
-      position: absolute; left: 50%; top: 58%;
+      position: absolute; left: 50%; top: 62%;
       transform: translate(-50%, -50%);
-      width: min(270px, 54vw); height: auto;
+      width: min(440px, 92vw); height: auto;
       z-index: 1; pointer-events: none;
-      filter: drop-shadow(0 24px 60px rgba(232,112,112,0.22));
+      /* Videonun zemini sayfadan bir tık mavi; kenarları eritip dikdörtgeni gizliyoruz.
+         Alt kenar bırakılıyor: kum oradan çıkıp simülasyona devrediyor. */
+      -webkit-mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%),
+                          linear-gradient(to bottom, transparent 0, #000 9%, #000 100%);
+      -webkit-mask-composite: source-in;
+      mask-image: linear-gradient(to right, transparent 0, #000 14%, #000 86%, transparent 100%),
+                  linear-gradient(to bottom, transparent 0, #000 9%, #000 100%);
+      mask-composite: intersect;
     }
     .stage::after {
       content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
@@ -113,17 +120,44 @@
       font-size: 0.82rem; text-decoration: none;
     }
 
-    /* Kum akışı: sayfanın tamamını kaplayan tek canvas (bkz. sayfa sonundaki simülasyon) */
-    #sandfield {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none;
-      width: 100%; height: 100%;
+    /* Akışın arasındaki büyük söz */
+    .statement {
+      max-width: 900px; margin: 0 auto;
+      padding: clamp(72px, 14vh, 140px) 24px clamp(56px, 10vh, 110px);
+      text-align: center;
+    }
+    .statement p {
+      font-size: clamp(1.7rem, 5.2vw, 3.4rem);
+      font-weight: 800; line-height: 1.18; letter-spacing: -1px;
+      background: linear-gradient(180deg, #FFFFFF 0%, var(--light) 60%, var(--blue) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .statement span { display: block; margin-top: 18px;
+      font-size: clamp(0.95rem, 2.2vw, 1.1rem); font-weight: 500;
+      letter-spacing: 0; color: var(--gray);
+      -webkit-text-fill-color: var(--gray);
+    }
+
+    /* Akan kum bandı */
+    .flow-band {
+      position: relative; height: clamp(220px, 42vh, 420px); overflow: hidden;
+    }
+    .flow-band video {
+      position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    }
+    .flow-band::after {
+      content: ""; position: absolute; inset: 0;
+      background: linear-gradient(to bottom, var(--bg) 0%, rgba(8,11,18,0) 22%,
+                                  rgba(8,11,18,0) 78%, var(--bg) 100%);
     }
     @media (prefers-reduced-motion: reduce) {
-      #sandfield { display: none; }
+      .flow-band video { display: none; }
+      .flow-band { background: url(flow-band.webp) center/cover; }
     }
     @media (max-width: 760px) {
       .stage { min-height: 92svh; padding-top: 72px; }
-      .stage-object { width: min(210px, 52vw); top: 52%; }
+      .stage-object { width: min(340px, 96vw); top: 54%; }
       .stage-tagline { font-size: 0.95rem; }
     }
 
@@ -401,11 +435,12 @@
   </div>
 </nav>
 
-<canvas id="sandfield" aria-hidden="true"></canvas>
-
 <!-- SİNEMATİK AÇILIŞ -->
 <section class="stage">
-  <img class="stage-object" id="stage-object" src="logo-shell.webp" alt="PhoneLimit" />
+  <video class="stage-object" id="stage-object" autoplay muted loop playsinline
+         preload="metadata" poster="hero-loop.webp" aria-label="PhoneLimit">
+    <source src="hero-loop.mp4" type="video/mp4" />
+  </video>
   <div class="stage-inner">
     <h1 class="stage-title">PhoneLimit</h1>
     <p class="stage-tagline">Your time is running. Decide how you spend it — before you open the app.</p>
@@ -417,6 +452,20 @@
     <a href="#features" class="stage-scroll">See how it works ↓</a>
   </div>
 </section>
+
+<!-- BÜYÜK SÖZ -->
+<section class="statement">
+  <p>Time doesn't stop. Your scrolling can.
+    <span>Every minute you don't spend on the screen goes somewhere else — that is the whole point.</span>
+  </p>
+</section>
+
+<!-- AKAN KUM BANDI -->
+<div class="flow-band">
+  <video autoplay muted loop playsinline preload="none" poster="flow-band.webp" aria-hidden="true">
+    <source src="flow-band.mp4" type="video/mp4" />
+  </video>
+</div>
 
 <!-- HERO -->
 <section class="hero">
@@ -608,205 +657,6 @@
 </footer>
 
   <script>
-    /* Kum akışı simülasyonu.
-       Görsel yalnızca boş kabuk: kumun tamamını bu kod çiziyor. Tanecikler üst
-       haznede birikir, bacakların daraldığı bel noktasına doğru huni gibi
-       süzülür, oradan çıkıp sayfanın tamamı boyunca ipek gibi dalgalanan bir
-       şerit halinde akar. Döngü diye bir şey yok — akış sürekli. */
-    (function () {
-      var canvas = document.getElementById("sandfield");
-      if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      var ctx = canvas.getContext("2d", { alpha: true });
-      var obj = document.getElementById("stage-object");
-
-      // Kabuğun ölçülen geometrisi (nesneye göre oranlar)
-      var MOUND_TOP = 0.47,   // kum yüzeyinin üst sınırı (saat kadranının hemen altı)
-          WAIST_Y   = 0.73,   // bacakların en daraldığı yer
-          WAIST_X   = 0.543,
-          TOP_L = 0.215, TOP_R = 0.875,   // o yükseklikteki iç duvarlar
-          WAIST_HALF = 0.055,
-          EXIT_Y = 1.02;      // kabuğun bittiği yer
-
-      var W = 0, H = 0, dpr = 1;
-      var box = { x: 0, y: 0, w: 0, h: 0, on: false };
-
-      function measure() {
-        dpr = Math.min(window.devicePixelRatio || 1, 1.25);
-        W = window.innerWidth; H = window.innerHeight;
-        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
-        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      }
-
-      function locate() {
-        if (!obj) return;
-        var r = obj.getBoundingClientRect();
-        if (!r.width) return;
-        box.x = r.left; box.y = r.top; box.w = r.width; box.h = r.height;
-        box.on = r.bottom > -100 && r.top < H + 100;
-      }
-
-      // Belirli bir yükseklikte huninin merkezi ve yarı genişliği (nesne oranıyla)
-      function funnel(ry) {
-        var t = (ry - MOUND_TOP) / (WAIST_Y - MOUND_TOP);
-        t = t < 0 ? 0 : (t > 1 ? 1 : t);
-        var l = TOP_L + (WAIST_X - WAIST_HALF - TOP_L) * t;
-        var r = TOP_R + (WAIST_X + WAIST_HALF - TOP_R) * t;
-        return { c: (l + r) / 2, half: (r - l) / 2 };
-      }
-
-      // Kabuğun altındaki şeridin dalgası: iki sinüsün toplamı, çıkışta sıfır
-      function wave(y, y0, t) {
-        var d = y - y0;
-        var w1 = Math.sin(d * 0.0045 + t * 0.00035) - Math.sin(t * 0.00035);
-        var w2 = Math.sin(d * 0.0012 - t * 0.00022) - Math.sin(-t * 0.00022);
-        return w1 * 40 + w2 * 74;
-      }
-
-      var COLORS = [[232,112,112], [255,144,144], [174,207,223]];
-      function tint(k) {
-        var i = 0, f = k / 0.55;
-        if (k >= 0.55) { i = 1; f = (k - 0.55) / 0.45; }
-        var a = COLORS[i], b = COLORS[i + 1];
-        return "rgb(" + Math.round(a[0] + (b[0] - a[0]) * f) + "," +
-                        Math.round(a[1] + (b[1] - a[1]) * f) + "," +
-                        Math.round(a[2] + (b[2] - a[2]) * f) + ")";
-      }
-
-      var grains = [];
-      function spawn(g, seeded) {
-        g.dust = Math.random() < 0.12;
-        // u: huni içindeki sütun konumu (-1 sol duvar, +1 sağ duvar)
-        g.u = (Math.random() * 2 - 1) * (g.dust ? 1 : 0.95);
-        g.ry = seeded ? MOUND_TOP + Math.random() * (WAIST_Y - MOUND_TOP) : MOUND_TOP + Math.random() * 0.02;
-        g.free = false; g.y = 0; g.vy = 0;
-        g.size = g.dust ? 1 : (Math.random() < 0.86 ? 1 : 2);
-        g.base = g.dust ? 0.12 + Math.random() * 0.14 : 0.22 + Math.random() * 0.45;
-        g.settle = 0.012 + Math.random() * 0.03;  // hazne içindeki süzülme hızı
-        g.seed = Math.random() * 1000;
-        g.sway = (Math.random() - 0.5) * 0.9;
-      }
-
-      function resize() {
-        measure(); locate();
-        cap = Math.max(1500, Math.min(4200, Math.round(W * H / 380)));
-        var target = cap;
-        while (grains.length < target) { var g = {}; spawn(g, true); grains.push(g); }
-        grains.length = target;
-      }
-
-      var last = 0, raf = 0, cap = 0, slow = 0, avg = 16;
-      function frame(now) {
-        var raw = now - last;
-        var dt = Math.min(raw / 1000, 0.05); last = now;
-
-        // Zayıf cihazda kendini ayarlar: kare süresi uzarsa tanecik sayısı düşer
-        avg += (raw - avg) * 0.05;
-        if (avg > 24 && grains.length > 1200) {
-          if (++slow > 45) { grains.length = Math.round(grains.length * 0.8); slow = 0; avg = 16; }
-        } else slow = 0;
-        locate();
-        ctx.clearRect(0, 0, W, H);
-
-        var exitY = box.y + box.h * EXIT_Y;
-        var waistY = box.y + box.h * WAIST_Y;
-
-        if (box.on) {
-          // Haznedeki kum kütlesi
-          var grad = ctx.createLinearGradient(0, box.y + MOUND_TOP * box.h, 0, box.y + WAIST_Y * box.h);
-          grad.addColorStop(0, "rgba(232,112,112,0)");
-          grad.addColorStop(0.22, "rgba(232,112,112,0.20)");
-          grad.addColorStop(0.6, "rgba(240,126,126,0.30)");
-          grad.addColorStop(1, "rgba(255,144,144,0.26)");
-          ctx.fillStyle = grad;
-          ctx.beginPath();
-          for (var q = 0; q <= 14; q++) {
-            var ry = MOUND_TOP + (WAIST_Y - MOUND_TOP) * (q / 14), fq = funnel(ry);
-            ctx.lineTo(box.x + (fq.c - fq.half * 0.93) * box.w, box.y + ry * box.h);
-          }
-          for (var q2 = 14; q2 >= 0; q2--) {
-            var ry2 = MOUND_TOP + (WAIST_Y - MOUND_TOP) * (q2 / 14), f2 = funnel(ry2);
-            ctx.lineTo(box.x + (f2.c + f2.half * 0.93) * box.w, box.y + ry2 * box.h);
-          }
-          ctx.closePath();
-          ctx.fill();
-        }
-
-        // Kabuğun altındaki şeridin kütlesi: daralan üç geçiş, kenarları yumuşatıyor
-        var top = box.on ? waistY : -20;
-        var cx0 = box.on ? box.x + WAIST_X * box.w : W / 2;
-        var rg = ctx.createLinearGradient(0, top, 0, H);
-        rg.addColorStop(0, "rgba(255,144,144,0.26)");
-        rg.addColorStop(0.45, "rgba(232,112,112,0.16)");
-        rg.addColorStop(1, "rgba(174,207,223,0.05)");
-        ctx.fillStyle = rg;
-        for (var pass = 0; pass < 3; pass++) {
-          var k = [1, 0.62, 0.3][pass];
-          ctx.beginPath();
-          for (var yy = top; yy <= H + 10; yy += 16) {
-            var dp = Math.max(0, Math.min(1, (yy - exitY) / Math.max(H, 1)));
-            var sp = box.w * WAIST_HALF * (1.25 + dp * 4.5) * 0.75 * k;
-            ctx.lineTo(cx0 - sp + wave(yy, exitY, now) * Math.min(1, 0.1 + dp * 2), yy);
-          }
-          for (var yb = H + 10; yb >= top; yb -= 16) {
-            var dp2 = Math.max(0, Math.min(1, (yb - exitY) / Math.max(H, 1)));
-            var sp2 = box.w * WAIST_HALF * (1.25 + dp2 * 4.5) * 0.75 * k;
-            ctx.lineTo(cx0 + sp2 + wave(yb, exitY, now) * Math.min(1, 0.1 + dp2 * 2), yb);
-          }
-          ctx.closePath();
-          ctx.fill();
-        }
-
-        for (var i = 0; i < grains.length; i++) {
-          var g = grains[i], x, y, a, depth;
-
-          if (!g.free) {
-            // Hazne içinde: huni daraldıkça tanecikler kendiliğinden bel noktasına toplanır
-            g.ry += g.settle * dt;
-            if (g.ry >= WAIST_Y || !box.on) {
-              g.free = true;
-              g.y = box.on ? waistY : -20;
-              g.vy = 22 + Math.random() * 46;
-              continue;
-            }
-            var f = funnel(g.ry);
-            x = box.x + (f.c + g.u * f.half) * box.w;
-            y = box.y + g.ry * box.h;
-            var near = Math.max(0, 1 - (g.ry - MOUND_TOP) / 0.12);
-            a = g.base * (0.78 + 0.22 * Math.sin(now * 0.002 + g.seed)) * (1 + near * 0.5);
-            depth = 0;
-          } else {
-            g.vy += (g.dust ? 7 : 38) * dt;
-            g.y += g.vy * dt;
-            if (g.y > H + 20) { spawn(g, false); if (!box.on) { g.free = true; g.y = -20; g.vy = 20; } continue; }
-            y = g.y;
-            depth = Math.max(0, Math.min(1, (y - exitY) / Math.max(H, 1)));
-            var spread = g.dust ? 26 + depth * W * 0.25 : box.w * WAIST_HALF * (1.25 + depth * 4.5);
-            var cx = box.on ? box.x + WAIST_X * box.w : W / 2;
-            x = cx + g.u * spread +
-                wave(y, exitY, now) * (g.dust ? 0.3 : Math.min(1, 0.1 + depth * 2)) +
-                Math.sin(now * 0.0007 + g.seed) * g.sway * 12;
-            a = g.base * (1 - depth * 0.3);
-          }
-
-          var glint = Math.sin(now * 0.004 + g.seed) > 0.985 ? 1.9 : 1;
-          ctx.globalAlpha = Math.max(0, Math.min(1, a * glint));
-          ctx.fillStyle = g.dust ? "rgb(192,203,216)" : tint(depth);
-          ctx.fillRect(x, y, g.size, g.size);
-        }
-        ctx.globalAlpha = 1;
-        raf = requestAnimationFrame(frame);
-      }
-
-      function start() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }
-      function stop() { cancelAnimationFrame(raf); raf = 0; }
-
-      resize();
-      window.addEventListener("resize", resize);
-      document.addEventListener("visibilitychange", function () { document.hidden ? stop() : start(); });
-      if (obj && !obj.complete) obj.addEventListener("load", resize);
-      start();
-    })();
-
     // Fiyatı ziyaretçinin diline göre göster: Türkiye dışındaki kimse TL tutarını
     // görmesin (Play zaten herkese kendi ülkesinin fiyatını gösteriyor).
     (function () {
