@@ -128,16 +128,16 @@
       padding: clamp(64px, 12vh, 120px) 24px;
       text-align: center;
     }
-    .statement video {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: cover; z-index: 0;
-    }
-    .statement::after {
-      content: ""; position: absolute; inset: 0; z-index: 1;
-      background: linear-gradient(to bottom, var(--bg) 0%, rgba(8,11,18,0.55) 26%,
-                                  rgba(8,11,18,0.55) 74%, var(--bg) 100%);
-    }
     .statement > div { position: relative; z-index: 2; max-width: 900px; }
+
+    /* Akan kum: sayfanın tamamının arkasında, yukarıdan aşağı */
+    .flow-bg {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    }
+    .flow-bg video {
+      width: 100%; height: 100%; object-fit: cover;
+      opacity: 0.42; mix-blend-mode: screen;
+    }
     .statement p {
       font-size: clamp(1.7rem, 5.2vw, 3.4rem);
       font-weight: 800; line-height: 1.18; letter-spacing: -1px;
@@ -152,8 +152,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .statement video { display: none; }
-      .statement { background: url(flow-band.webp) center/cover; }
+      .flow-bg { display: none; }
     }
     @media (max-width: 760px) {
       .stage { min-height: 92svh; padding-top: 72px; }
@@ -435,6 +434,12 @@
   </div>
 </nav>
 
+<div class="flow-bg" aria-hidden="true">
+  <video autoplay muted loop playsinline preload="metadata" poster="flow-bg.webp">
+    <source src="flow-bg.mp4" type="video/mp4" />
+  </video>
+</div>
+
 <!-- SİNEMATİK AÇILIŞ -->
 <section class="stage">
   <video class="stage-object" id="stage-object" autoplay muted loop playsinline
@@ -455,9 +460,6 @@
 
 <!-- BÜYÜK SÖZ — akan kumun üstünde -->
 <section class="statement">
-  <video autoplay muted loop playsinline preload="none" poster="flow-band.webp" aria-hidden="true">
-    <source src="flow-band.mp4" type="video/mp4" />
-  </video>
   <div>
     <p>Time doesn't stop. Your scrolling can.
       <span>Every minute you don't spend on the screen goes somewhere else - that is the whole point.</span>
