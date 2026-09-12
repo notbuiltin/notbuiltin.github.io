@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>PhoneLimit — Take Control of Your Screen Time</title>
+  <title>PhoneLimit: Take Control of Your Screen Time</title>
   <meta name="description" content="PhoneLimit helps you understand your screen habits, set limits, and block distracting apps. All your usage data stays on your device." />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -128,7 +128,9 @@
     }
     .flow-bg video {
       width: 100%; height: 100%; object-fit: cover;
-      opacity: 0.42; mix-blend-mode: screen;
+      opacity: 0.72; mix-blend-mode: screen;
+      /* Karışım modu rengi soldurduğu için doygunluk ve kontrast geri veriliyor */
+      filter: saturate(1.6) contrast(1.15);
     }
     .statement p {
       font-size: clamp(1.7rem, 5.2vw, 3.4rem);
@@ -411,13 +413,13 @@
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="PhoneLimit" />
   <meta property="og:url" content="https://notbuiltin.github.io/phonelimit/" />
-  <meta property="og:title" content="PhoneLimit — Take Control of Your Screen Time" />
+  <meta property="og:title" content="PhoneLimit: Take Control of Your Screen Time" />
   <meta property="og:description" content="Set your time before you open the app. Track your screen time, block distracting apps, and build better habits." />
   <meta property="og:image" content="https://notbuiltin.github.io/phonelimit/og.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="PhoneLimit — Take Control of Your Screen Time" />
+  <meta name="twitter:title" content="PhoneLimit: Take Control of Your Screen Time" />
   <meta name="twitter:description" content="Set your time before you open the app. Track your screen time, block distracting apps, and build better habits." />
   <meta name="twitter:image" content="https://notbuiltin.github.io/phonelimit/og.jpg" />
 </head>
@@ -453,7 +455,7 @@
   </video>
   <div class="stage-inner">
     <h1 class="stage-title">PhoneLimit</h1>
-    <p class="stage-tagline">Your time is running. Decide how you spend it — before you open the app.</p>
+    <p class="stage-tagline">Your time is running. Decide how you spend it before you open the app.</p>
   </div>
   <div class="stage-inner stage-cta">
     <a href="https://play.google.com/store/apps/details?id=app.phonelimit" class="btn-primary">
@@ -463,7 +465,7 @@
   </div>
 </section>
 
-<!-- BÜYÜK SÖZ — akan kumun üstünde -->
+<!-- BÜYÜK SÖZ (akan kumun üstünde) -->
 <section class="statement">
   <div>
     <p>Time doesn't stop. Your scrolling can.
@@ -495,7 +497,7 @@
   <div class="trust-inner">
     <div class="trust-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg>
-      100% on-device — your usage never leaves your phone
+      100% on-device, your usage never leaves your phone
     </div>
     <div class="trust-item">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
@@ -534,7 +536,7 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
       </div>
       <h3>Scheduled Limits</h3>
-      <p>Block apps during specific hours — bedtime, study sessions, or dinner. Late-night scrolling, gone.</p>
+      <p>Block apps during specific hours: bedtime, study sessions, or dinner. Late-night scrolling, gone.</p>
     </div>
     <div class="feat-card">
       <div class="feat-icon">
@@ -548,14 +550,14 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       </div>
       <h3>Family Mode</h3>
-      <p>Protect your settings with a pattern lock so limits can't be changed — you stay in control.</p>
+      <p>Protect your settings with a pattern lock so limits can't be changed. You stay in control.</p>
     </div>
     <div class="feat-card">
       <div class="feat-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="2" width="12" height="20" rx="3"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
       </div>
       <h3>Home Screen Widget</h3>
-      <p>Glance at today's screen time and your streak right from the home screen — no need to open the app.</p>
+      <p>Glance at today's screen time and your streak right from the home screen, no need to open the app.</p>
     </div>
   </div>
 </section>
@@ -571,7 +573,7 @@
       <div class="step-num">1</div>
       <div class="step-body">
         <h3>Pick the apps to watch</h3>
-        <p>Choose the apps that eat up your day — Instagram, YouTube, TikTok — and start tracking instantly.</p>
+        <p>Choose the apps that eat up your day (Instagram, YouTube, TikTok) and start tracking instantly.</p>
       </div>
     </div>
     <div class="step">
@@ -595,7 +597,7 @@
 <section class="section" id="pricing" style="padding-top: 0;">
   <p class="section-label">Pricing</p>
   <h2 class="section-title">Start free</h2>
-  <p class="section-sub">Upgrade only when you need more. Cancel anytime — no pressure.</p>
+  <p class="section-sub">Upgrade only when you need more. Cancel anytime, no pressure.</p>
 
   <div class="pricing-grid">
 
