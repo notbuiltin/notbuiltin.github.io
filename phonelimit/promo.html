@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PhoneLimit Pro — launch offer</title>
+  <meta name="description" content="Launch offer: 50% off PhoneLimit Pro — €2.99 for the first year (regularly €5.99/year)." />
+  <meta property="og:title" content="PhoneLimit Pro — launch offer, €2.99 for the first year" />
+  <meta property="og:description" content="Launch offer. Regularly €5.99/year." />
+  <meta property="og:image" content="https://notbuiltin.github.io/phonelimit/logo.webp" />
+  <link rel="icon" href="icon.webp" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --coral: #E87070; --coral2: #FF9090; --purple: #818CF8;
+      --bg: #080B12; --surface: #131B28;
+      --border: rgba(255,255,255,0.07);
+      --white: #EFF3F8; --gray: #8896A8; --light: #C0CBD8;
+      --green: #2E9E5B;
+    }
+    body {
+      background: var(--bg); color: var(--white); min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      line-height: 1.6; -webkit-font-smoothing: antialiased;
+      display: flex; align-items: center; justify-content: center; padding: 32px 20px;
+    }
+    .card {
+      width: 100%; max-width: 440px; text-align: center;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 24px; padding: 36px 28px;
+    }
+    .logo { width: 72px; height: 72px; border-radius: 18px; object-fit: contain; }
+    .tag { display: inline-block; margin-top: 18px; padding: 4px 14px; border-radius: 999px;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      background: rgba(129,140,248,0.15); color: var(--purple); }
+    h1 { margin-top: 12px; font-size: 1.6rem; font-weight: 800; letter-spacing: -0.4px; line-height: 1.25; }
+    .price { margin-top: 18px; display: flex; align-items: baseline; justify-content: center; gap: 12px; }
+    .price .now { font-size: 2.6rem; font-weight: 800; }
+    .price .was { font-size: 1.2rem; color: var(--gray); text-decoration: line-through; }
+    .terms { color: var(--light); font-size: 0.92rem; }
+    .btn { display: block; width: 100%; margin-top: 12px; padding: 14px 18px; border-radius: 14px;
+      font-size: 1rem; font-weight: 700; text-decoration: none; cursor: pointer; border: none; }
+    .btn-primary { background: var(--green); color: #fff; }
+    .btn-secondary { background: transparent; color: var(--light); border: 1px solid var(--border); }
+    .steps { margin-top: 24px; text-align: left; color: var(--gray); font-size: 0.9rem; }
+    .steps li { margin: 6px 0 6px 20px; }
+    .small { margin-top: 18px; font-size: 0.78rem; color: var(--gray); }
+    .small a { color: var(--gray); }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <img class="logo" src="icon.webp" alt="PhoneLimit" />
+    <div class="tag" id="tag">Launch offer · 50% off</div>
+    <h1 id="title">PhoneLimit Pro</h1>
+    <div class="price"><span class="now">€2.99</span><span class="was">€5.99</span></div>
+    <p class="terms" id="terms">for the first year, then €5.99/year. Cancel anytime in Google Play.</p>
+
+    <a class="btn btn-primary" id="open" href="#" hidden>Open offer in PhoneLimit</a>
+    <a class="btn btn-primary" id="play" href="https://play.google.com/store/apps/details?id=app.phonelimit">Get PhoneLimit on Google Play</a>
+
+    <ol class="steps">
+      <li id="s1">Install PhoneLimit from Google Play.</li>
+      <li id="s2">Open the app and go to the Pro screen.</li>
+      <li id="s3">The launch price is already applied — no code needed.</li>
+    </ol>
+
+    <p class="small" id="note">Euro price. In other countries the discount is shown in your local currency on the Pro screen.</p>
+    <p class="small"><a href="./" id="home">About PhoneLimit</a> · <a href="privacy.html" id="privacy">Privacy</a></p>
+  </main>
+
+  <script>
+    (function () {
+      // Pass the ad's utm_source/utm_campaign (from this page's URL) through Play's
+      // install referrer, so Analytics attributes the install to the right ad. The
+      // launch discount itself needs no code — Play applies it on the Pro screen.
+      var q = new URLSearchParams(location.search);
+      var ref = "utm_source=" + encodeURIComponent(q.get("utm_source") || "promo_page") +
+        "&utm_medium=" + encodeURIComponent(q.get("utm_medium") || "social") +
+        (q.get("utm_campaign") ? "&utm_campaign=" + encodeURIComponent(q.get("utm_campaign")) : "");
+      var PLAY = "https://play.google.com/store/apps/details?id=app.phonelimit&referrer=" + encodeURIComponent(ref);
+      document.getElementById("play").href = PLAY;
+      var tr = (navigator.language || "").toLowerCase().indexOf("tr") === 0;
+      var t = tr ? {
+        tag: "Lansmana özel · %50 indirim", terms: "ilk yıl için, sonrasında 149,99 ₺/yıl. Google Play'den istediğin zaman iptal edebilirsin.",
+        open: "İndirimi PhoneLimit'te aç",
+        play: "Google Play'den PhoneLimit'i indir",
+        s1: "PhoneLimit'i Google Play'den yükle.",
+        s2: "Uygulamayı aç ve Pro ekranına git.",
+        s3: "Lansman fiyatı zaten uygulanmış olarak görünür — kod gerekmez.",
+        note: "Türkiye'de ilk yıl 74,99 ₺, sonrasında 149,99 ₺/yıl. Diğer ülkelerde indirim, Pro ekranında yerel para biriminle gösterilir.",
+        home: "PhoneLimit hakkında", privacy: "Gizlilik", lang: "tr"
+      } : { open: "Open offer in PhoneLimit", play: "Get PhoneLimit on Google Play", lang: "en" };
+      document.documentElement.lang = t.lang;
+      ["tag", "terms", "s1", "s2", "s3", "note", "home", "privacy"].forEach(function (id) {
+        if (t[id]) document.getElementById(id).textContent = t[id];
+      });
+      document.getElementById("play").textContent = t.play;
+
+      // App installed but the link opened in a browser (e.g. an in-app browser):
+      // hand off via the custom scheme, falling back to the Play Store.
+      if (/android/i.test(navigator.userAgent)) {
+        var open = document.getElementById("open");
+        open.href = "intent://promo#Intent;scheme=phonelimit;package=app.phonelimit;S.browser_fallback_url=" +
+          encodeURIComponent(PLAY) + ";end";
+        open.textContent = t.open;
+        open.hidden = false;
+        document.getElementById("play").className = "btn btn-secondary";
+      }
+    })();
+  </script>
+</body>
+</html>
