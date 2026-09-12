@@ -81,23 +81,19 @@
       display: flex; flex-direction: column; align-items: center;
       text-align: center; padding: 88px 24px 48px; overflow: hidden;
     }
-    .stage-video {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      object-fit: cover; object-position: center top;
-      /* Saat başlığın altında kalsın diye kare biraz aşağı kaydırılıp büyütülüyor */
-      transform: translateY(13%) scale(1.28);
-      -webkit-mask-image: linear-gradient(to bottom, #000 34%, rgba(0,0,0,0.5) 62%, transparent 80%);
-      mask-image: linear-gradient(to bottom, #000 34%, rgba(0,0,0,0.5) 62%, transparent 80%);
-      z-index: 0;
+    .stage-object {
+      position: absolute; left: 50%; top: 58%;
+      transform: translate(-50%, -50%);
+      width: min(270px, 54vw); height: auto;
+      z-index: 1; pointer-events: none;
+      filter: drop-shadow(0 24px 60px rgba(232,112,112,0.22));
     }
-    /* Videonun üstünü ve altını sayfaya eritir; başlık her zaman okunur kalır */
     .stage::after {
-      content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
-      background:
-        linear-gradient(to bottom, rgba(8,11,18,0.92) 0%, rgba(8,11,18,0.35) 28%,
-                        rgba(8,11,18,0.08) 52%, rgba(8,11,18,0.2) 88%, rgba(8,11,18,0.35) 100%);
+      content: ""; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+      background: linear-gradient(to bottom, rgba(8,11,18,0.75) 0%, rgba(8,11,18,0) 30%,
+                                  rgba(8,11,18,0) 78%, rgba(8,11,18,0.55) 100%);
     }
-    .stage > .stage-inner { position: relative; z-index: 2; width: 100%; }
+    .stage > .stage-inner { position: relative; z-index: 3; width: 100%; }
     .stage-title {
       font-size: clamp(2.8rem, 11vw, 7.5rem);
       font-weight: 900; letter-spacing: clamp(-2px, -0.4vw, 2px);
@@ -117,43 +113,17 @@
       font-size: 0.82rem; text-decoration: none;
     }
 
-    /* Sayfanın tamamında aşağı akan zaman: partikül videosu + toz tanecikleri */
-    .flow-layer {
-      position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+    /* Kum akışı: sayfanın tamamını kaplayan tek canvas (bkz. sayfa sonundaki simülasyon) */
+    #sandfield {
+      position: fixed; inset: 0; z-index: 0; pointer-events: none;
+      width: 100%; height: 100%;
     }
-    .flow-layer video {
-      width: 100%; height: 100%; object-fit: cover;
-      opacity: 0.22; mix-blend-mode: screen;
-    }
-    .dust { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
-    .dust span {
-      position: absolute; top: -12vh; border-radius: 50%;
-      background: var(--coral2); opacity: 0;
-      animation: dustfall linear infinite;
-    }
-    @keyframes dustfall {
-      0%   { transform: translateY(0) translateX(0); opacity: 0; }
-      10%  { opacity: var(--peak); }
-      90%  { opacity: var(--peak); }
-      100% { transform: translateY(125vh) translateX(var(--drift)); opacity: 0; }
-    }
-    /* Hareket hassasiyeti olan kullanıcıda video ve toz durur */
     @media (prefers-reduced-motion: reduce) {
-      .flow-layer, .dust { display: none; }
-      .stage-video { display: none; }
-      .stage { background: url(hero-poster.webp) center/cover; }
+      #sandfield { display: none; }
     }
-
     @media (max-width: 760px) {
-      .stage {
-        min-height: 92svh; padding-top: 72px;
-        background: linear-gradient(to bottom, var(--bg) 0%, #060D18 12%, #060D18 88%, var(--bg) 100%);
-      }
-      .stage-video {
-        object-fit: contain; object-position: center 58%;
-        transform: scale(1.5);
-        -webkit-mask-image: none; mask-image: none;
-      }
+      .stage { min-height: 92svh; padding-top: 72px; }
+      .stage-object { width: min(210px, 52vw); top: 52%; }
       .stage-tagline { font-size: 0.95rem; }
     }
 
@@ -431,19 +401,11 @@
   </div>
 </nav>
 
-<!-- AKAN ZAMAN KATMANLARI (tüm sayfa) -->
-<div class="flow-layer" aria-hidden="true">
-  <video autoplay muted loop playsinline preload="metadata">
-    <source src="flow-stream.mp4" type="video/mp4" />
-  </video>
-</div>
-<div class="dust" id="dust" aria-hidden="true"></div>
+<canvas id="sandfield" aria-hidden="true"></canvas>
 
 <!-- SİNEMATİK AÇILIŞ -->
 <section class="stage">
-  <video class="stage-video" autoplay muted loop playsinline preload="metadata" poster="hero-poster.webp">
-    <source src="hero-sand.mp4" type="video/mp4" />
-  </video>
+  <img class="stage-object" id="stage-object" src="logo-object.webp" alt="PhoneLimit" />
   <div class="stage-inner">
     <h1 class="stage-title">PhoneLimit</h1>
     <p class="stage-tagline">Your time is running. Decide how you spend it — before you open the app.</p>
@@ -646,25 +608,123 @@
 </footer>
 
   <script>
-    // Sayfanın tamamında aşağı süzülen toz — işaretlemeyi şişirmemek için burada üretiliyor.
+    /* Kum akışı simülasyonu.
+       Logonun bel kısmından çıkan tanecikler, sayfa boyunca aşağı akan tek bir
+       şerit oluşturur. Şeridin yolu zamana bağlı iki sinüsün toplamı: ipek gibi
+       dalgalanır ama yatay konumu hiç kaçmaz. Video olmadığı için döngü diye bir
+       sorun yok — akış sonsuz sürer ve dosya birkaç KB'dir. */
     (function () {
-      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-      var host = document.getElementById("dust");
-      var colors = ["#FF9090", "#E87070", "#AECFDF", "#C0CBD8"];
-      var frag = document.createDocumentFragment();
-      for (var i = 0; i < 40; i++) {
-        var d = document.createElement("span");
-        var size = 1 + Math.random() * 2.6;
-        d.style.left = (Math.random() * 100).toFixed(2) + "vw";
-        d.style.width = d.style.height = size.toFixed(2) + "px";
-        d.style.background = colors[i % colors.length];
-        d.style.animationDuration = (14 + Math.random() * 22).toFixed(1) + "s";
-        d.style.animationDelay = "-" + (Math.random() * 30).toFixed(1) + "s";
-        d.style.setProperty("--peak", (0.15 + Math.random() * 0.4).toFixed(2));
-        d.style.setProperty("--drift", (Math.random() * 60 - 30).toFixed(0) + "px");
-        frag.appendChild(d);
+      var canvas = document.getElementById("sandfield");
+      if (!canvas || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      var ctx = canvas.getContext("2d", { alpha: true });
+      var obj = document.getElementById("stage-object");
+
+      var W = 0, H = 0, dpr = 1;
+      // Kaynağın ekrandaki yeri: logonun bel noktası (görselin %51 eni, %92 boyu)
+      var src = { x: 0, y: 0, w: 40, active: false };
+
+      function measure() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        W = window.innerWidth; H = window.innerHeight;
+        canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       }
-      host.appendChild(frag);
+
+      function locate() {
+        if (!obj) return;
+        var r = obj.getBoundingClientRect();
+        if (!r.width) return;
+        src.x = r.left + r.width * 0.51;
+        src.y = r.top + r.height * 0.92;
+        src.w = Math.max(6, r.width * 0.07);
+        // Logo ekrandan çıktıysa kum sayfanın üstünden düşmeye devam eder
+        src.active = r.bottom > -200;
+      }
+
+      // Şeridin merkez çizgisi: derinliğe ve zamana bağlı iki dalga
+      function ribbon(y, t) {
+        return Math.sin(y * 0.0042 + t * 0.00035) * 42 +
+               Math.sin(y * 0.0011 - t * 0.00021) * 78;
+      }
+
+      var COLORS = [[232,112,112], [255,144,144], [174,207,223]];
+      function tint(k) {
+        var i = k < 0.55 ? 0 : 1, f;
+        if (k < 0.55) { f = k / 0.55; }
+        else { i = 1; f = (k - 0.55) / 0.45; }
+        var a = COLORS[i], b = COLORS[i + 1];
+        return "rgb(" + Math.round(a[0] + (b[0] - a[0]) * f) + "," +
+                        Math.round(a[1] + (b[1] - a[1]) * f) + "," +
+                        Math.round(a[2] + (b[2] - a[2]) * f) + ")";
+      }
+
+      var grains = [], DUST = 0.14;
+      function spawn(g, seeded) {
+        var dust = Math.random() < DUST;
+        g.dust = dust;
+        var r = Math.random() - Math.random(); // merkeze yığılan dağılım
+        g.off = (dust ? (Math.random() - 0.5) * W * 0.9 : r * src.w * 1.2);
+        g.y = seeded ? Math.random() * H : src.y + Math.random() * 8;
+        g.vy = (dust ? 8 : 26) + Math.random() * (dust ? 10 : 34);
+        g.size = dust ? 0.5 + Math.random() * 0.9 : 0.6 + Math.random() * 1.4;
+        g.base = dust ? 0.16 + Math.random() * 0.2 : 0.38 + Math.random() * 0.5;
+        g.sway = (Math.random() - 0.5) * 0.9;
+        g.glint = Math.random() * 6;
+        g.seed = Math.random() * 1000;
+      }
+
+      function resize() {
+        measure(); locate();
+        var target = Math.max(400, Math.min(1100, Math.round(W * H / 1700)));
+        while (grains.length < target) { var g = {}; spawn(g, true); grains.push(g); }
+        grains.length = target;
+      }
+
+      var last = 0;
+      function frame(now) {
+        var dt = Math.min((now - last) / 1000, 0.05); last = now;
+        locate();
+        ctx.clearRect(0, 0, W, H);
+
+        for (var i = 0; i < grains.length; i++) {
+          var g = grains[i];
+          g.vy += (g.dust ? 6 : 34) * dt;          // ağır çekim hissi
+          g.y += g.vy * dt;
+          if (g.y > H + 20) { spawn(g, false); if (!src.active) g.y = -20; continue; }
+
+          var depth = Math.max(0, Math.min(1, (g.y - src.y) / Math.max(H, 1)));
+          // Şerit belin hemen altında dar ve hizalı başlar, indikçe açılıp dalgalanır
+          var wave = (ribbon(g.y, now) - ribbon(src.y, now)) * (g.dust ? 0.3 : 1);
+          var spread = g.dust ? 1 : 0.3 + depth * 1.4;
+          var x = (g.dust ? W / 2 : src.x) + g.off * spread +
+                  wave * (g.dust ? 1 : Math.min(1, 0.15 + depth * 1.6)) +
+                  Math.sin(now * 0.0007 + g.seed) * g.sway * 14;
+
+          var a = g.base * (1 - depth * 0.35);
+          if (g.y < src.y + 10 && src.active) a *= Math.max(0, (g.y - src.y + 10) / 20);
+          var glint = Math.sin(now * 0.004 + g.glint) > 0.985 ? 1.8 : 1;
+
+          ctx.globalAlpha = Math.max(0, Math.min(1, a * glint));
+          ctx.fillStyle = g.dust ? "rgb(192,203,216)" : tint(depth);
+          ctx.beginPath();
+          ctx.arc(x, g.y, g.size, 0, 6.283);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+        raf = requestAnimationFrame(frame);
+      }
+
+      var raf = 0;
+      function start() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(frame); } }
+      function stop() { cancelAnimationFrame(raf); raf = 0; }
+
+      resize();
+      window.addEventListener("resize", resize);
+      document.addEventListener("visibilitychange", function () {
+        document.hidden ? stop() : start();
+      });
+      if (obj && !obj.complete) obj.addEventListener("load", resize);
+      start();
     })();
 
     // Fiyatı ziyaretçinin diline göre göster: Türkiye dışındaki kimse TL tutarını
