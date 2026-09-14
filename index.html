@@ -120,6 +120,25 @@
     .app p { color: var(--gray); font-size: 0.95rem; margin-top: 4px; }
     .app .go { display: inline-block; margin-top: 10px; font-size: 0.9rem; font-weight: 600; }
 
+    /* PhoneLimit card: on hover the icon turns into the whole hourglass clip, same box size */
+    .app.live .go { transition: color .3s ease; }
+    .app.live.flowing { border-color: rgba(232,112,112,0.45); }
+    .app.live.flowing .go { color: #FF9090; }
+
+    .app.live .icon {
+      position: relative; flex: none;
+      width: 64px; height: 64px;
+      border-radius: 16px; overflow: hidden;
+      background: #05080F;
+    }
+    .app.live .icon img, .app.live .icon video {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      border-radius: 0; transition: opacity .35s ease;
+    }
+    .app.live .icon video { object-fit: contain; opacity: 0; }
+    .app.live.flowing .icon img { opacity: 0; }
+    .app.live.flowing .icon video { opacity: 1; }
+
     .app.soon { border-style: dashed; background: transparent; align-items: center; }
     .app.soon .ph {
       width: 64px; height: 64px; border-radius: 16px; flex: none;
@@ -222,8 +241,14 @@
       <section>
         <h2 class="apps-title">Apps</h2>
         <div class="apps">
-          <a class="app" href="/phonelimit/">
-            <img src="phonelimit/icon.webp" alt="">
+          <a class="app live" href="/phonelimit/">
+            <div class="icon">
+              <img src="phonelimit/icon.webp" alt="">
+              <video muted loop playsinline preload="none" aria-hidden="true">
+                <source src="/phonelimit/hero-loop.webm" type="video/webm">
+                <source src="/phonelimit/hero-loop.mp4" type="video/mp4">
+              </video>
+            </div>
             <div>
               <h3>PhoneLimit</h3>
               <p>Set a time limit before you open an app. Stop doomscrolling before it starts.</p>
@@ -265,6 +290,23 @@
     const ticker = document.querySelector('.ticker .track');
     const once = words.map(w => `<span>${w}</span><i>✦</i>`).join('');
     ticker.innerHTML = once + once;
+
+    // PhoneLimit card: videos load on first use, play while hovered
+    // (touch screens have no hover, so there the card flows while it is on screen)
+    document.querySelectorAll('.app.live').forEach(card => {
+      const vids = [...card.querySelectorAll('video')];
+      const start = () => { card.classList.add('flowing'); vids.forEach(v => v.play().catch(() => {})); };
+      const stop  = () => { card.classList.remove('flowing'); vids.forEach(v => v.pause()); };
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (matchMedia('(hover: hover)').matches) {
+        card.addEventListener('mouseenter', start);
+        card.addEventListener('mouseleave', stop);
+        card.addEventListener('focus', start);
+        card.addEventListener('blur', stop);
+      } else {
+        new IntersectionObserver(([e]) => e.isIntersecting ? start() : stop(), { threshold: 0.6 }).observe(card);
+      }
+    });
 
     // scrolling the page nudges the rows sideways, in opposite directions
     let ticking = false;
