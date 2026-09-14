@@ -1,5 +1,378 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><title>notbuiltin</title>
-<meta http-equiv="refresh" content="0; url=/phonelimit/">
-<link rel="canonical" href="https://notbuiltin.github.io/phonelimit/"></head>
-<body><a href="/phonelimit/">PhoneLimit</a></body></html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Built-in</title>
+  <meta name="description" content="Small Android apps that should have been built in." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:      #07080A;
+      --surface: #111317;
+      --border:  rgba(255,255,255,0.08);
+      --white:   #F2F2EF;
+      --gray:    #8A8F98;
+      --warm:    255, 244, 220;
+    }
+
+    html, body { background: var(--bg); color: var(--white); overflow-x: hidden; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-inline: 20px;
+    }
+    html:has(body.intro-running), body.intro-running { overflow: hidden; }
+
+    /* ── INTRO ── */
+    #intro {
+      position: fixed; inset: 0; z-index: 1000;
+      --x: -30vw; --y: 50vh; --r: 18vmin; --b: 1;
+      cursor: pointer;
+    }
+    .half {
+      position: absolute; inset: 0;
+      background: var(--bg);
+      will-change: transform;
+    }
+    .half.top    { clip-path: inset(0 0 50% 0); }
+    .half.bottom { clip-path: inset(50% 0 0 0); }
+
+    .layer {
+      position: absolute; inset: 0;
+      display: grid; place-items: center;
+    }
+    .layer img { width: min(78vw, 920px); height: auto; display: block; user-select: none; -webkit-user-drag: none; }
+
+    /* logo barely visible in the dark */
+    .layer.dim img { opacity: 0.05; }
+
+    /* warm light cone on the wall */
+    .layer.beam {
+      background: radial-gradient(circle var(--r) at var(--x) var(--y),
+        rgba(var(--warm), calc(0.16 * var(--b))) 0%, rgba(var(--warm), calc(0.06 * var(--b))) 45%, transparent 100%);
+    }
+
+    /* logo lit only inside the beam */
+    .layer.lit {
+      -webkit-mask-image: radial-gradient(circle var(--r) at var(--x) var(--y), #000 0%, #000 35%, transparent 100%);
+              mask-image: radial-gradient(circle var(--r) at var(--x) var(--y), #000 0%, #000 35%, transparent 100%);
+    }
+    .layer.lit img { filter: drop-shadow(0 0 18px rgba(var(--warm), 0.35)); }
+
+    .flash {
+      position: absolute; inset: 0;
+      background: rgb(var(--warm));
+      opacity: 0; pointer-events: none;
+    }
+
+    .slit {
+      position: absolute; left: 0; right: 0; top: 50%;
+      height: 2px; margin-top: -1px;
+      background: linear-gradient(90deg, transparent, rgba(var(--warm), 0.95) 20%, #fff 50%, rgba(var(--warm), 0.95) 80%, transparent);
+      box-shadow: 0 0 24px 4px rgba(var(--warm), 0.45);
+      transform: scaleX(0); opacity: 0;
+      pointer-events: none;
+    }
+
+    .skip-hint {
+      position: absolute; bottom: 24px; left: 0; right: 0;
+      text-align: center; font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+      color: rgba(255,255,255,0.22);
+      pointer-events: none;
+    }
+
+    /* ── PAGE ── */
+    #page { opacity: 0; transform: scale(0.97); transform-origin: 50% 40%; }
+    #page.shown { opacity: 1; transform: none; transition: opacity 0.9s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); }
+
+    .wrap { max-width: 980px; margin: 0 auto; }
+
+    header { padding-block: 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    header img { height: 22px; width: auto; display: block; }
+    header a.contact { color: var(--gray); text-decoration: none; font-size: 0.9rem; }
+    header a.contact:hover { color: var(--white); }
+
+    .hero { padding-block: 12vh 10vh; }
+    .hero h1 {
+      font-size: clamp(2.2rem, 6vw, 4.2rem);
+      line-height: 1.05; letter-spacing: -0.03em; font-weight: 800;
+      max-width: 14ch;
+    }
+    .hero h1 span { color: var(--gray); }
+    .hero p { margin-top: 20px; color: var(--gray); font-size: 1.1rem; max-width: 46ch; }
+
+    .apps-title { font-size: 0.8rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray); margin-bottom: 16px; }
+    .apps { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 16px; }
+
+    .app {
+      display: flex; gap: 18px; align-items: flex-start;
+      padding: 22px; border-radius: 18px;
+      background: var(--surface); border: 1px solid var(--border);
+      color: inherit; text-decoration: none;
+      transition: border-color .2s ease, transform .2s ease;
+    }
+    a.app:hover { border-color: rgba(255,255,255,0.22); transform: translateY(-2px); }
+    .app img { width: 64px; height: 64px; border-radius: 16px; flex: none; }
+    .app h3 { font-size: 1.15rem; font-weight: 700; }
+    .app p { color: var(--gray); font-size: 0.95rem; margin-top: 4px; }
+    .app .go { display: inline-block; margin-top: 10px; font-size: 0.9rem; font-weight: 600; }
+
+    .app.soon { border-style: dashed; background: transparent; align-items: center; }
+    .app.soon .ph {
+      width: 64px; height: 64px; border-radius: 16px; flex: none;
+      border: 1px dashed var(--border); display: grid; place-items: center; color: var(--gray); font-size: 1.6rem;
+    }
+
+    footer { padding-block: 12vh 40px; color: var(--gray); font-size: 0.85rem; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    footer a { color: inherit; }
+
+    /* ── SHOWROOM: giant logos drifting behind ── */
+    .showroom {
+      position: fixed; inset: 0; z-index: 0;
+      display: flex; flex-direction: column; justify-content: space-around;
+      overflow: hidden; pointer-events: none;
+      opacity: 0; transition: opacity 1.4s ease;
+    }
+    .showroom.shown { opacity: 1; }
+    .showroom .row { will-change: transform; }
+    .showroom .track {
+      display: flex; width: max-content;
+      animation: drift var(--speed, 70s) linear infinite;
+    }
+    .showroom .row.rev .track { animation-direction: reverse; }
+    .showroom img {
+      height: min(20vw, 25vh); width: auto;
+      margin-right: clamp(40px, 6vw, 110px);
+      opacity: var(--o, 0.045);
+    }
+    @keyframes drift { to { transform: translateX(-50%); } }
+
+    #page { position: relative; z-index: 1; }
+
+    /* ── TICKER ── */
+    .ticker {
+      margin-inline: calc(50% - 50vw);
+      margin-bottom: 9vh;
+      padding-block: 18px;
+      border-block: 1px solid var(--border);
+      background: rgba(7,8,10,0.6);
+      backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
+      overflow: hidden;
+    }
+    .ticker .track {
+      display: flex; width: max-content;
+      animation: drift 38s linear infinite;
+    }
+    .ticker span {
+      font-size: clamp(1.4rem, 3.4vw, 2.4rem); font-weight: 800; letter-spacing: -0.01em;
+      text-transform: uppercase; white-space: nowrap;
+      padding-inline: 0.7em;
+    }
+    .ticker span:nth-of-type(odd)  { color: var(--white); }
+    .ticker span:nth-of-type(even) { color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.35); }
+    .ticker i { font-style: normal; color: var(--gray); align-self: center; font-size: 1rem; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .showroom .track, .ticker .track { animation: none; }
+    }
+
+  </style>
+</head>
+<body class="intro-running">
+
+  <div id="intro" aria-hidden="true">
+    <div class="half top">
+      <div class="layer beam"></div>
+      <div class="layer dim"><img src="builtin-logo.png" alt=""></div>
+      <div class="layer lit"><img src="builtin-logo.png" alt=""></div>
+    </div>
+    <div class="half bottom">
+      <div class="layer beam"></div>
+      <div class="layer dim"><img src="builtin-logo.png" alt=""></div>
+      <div class="layer lit"><img src="builtin-logo.png" alt=""></div>
+    </div>
+    <div class="flash"></div>
+    <div class="slit"></div>
+    <div class="skip-hint">Tap to skip</div>
+  </div>
+
+  <div class="showroom" aria-hidden="true">
+    <div class="row"     data-dir="1"  style="--speed:90s; --o:0.04"><div class="track"></div></div>
+    <div class="row rev" data-dir="-1" style="--speed:70s; --o:0.07"><div class="track"></div></div>
+    <div class="row"     data-dir="1"  style="--speed:110s; --o:0.03"><div class="track"></div></div>
+  </div>
+
+  <main id="page">
+    <div class="wrap">
+      <header>
+        <img src="builtin-logo.png" alt="Built-in">
+        <a class="contact" href="mailto:notbuiltin@gmail.com">Contact</a>
+      </header>
+
+      <section class="hero">
+        <h1>Small apps that should have been <span>built in.</span></h1>
+        <p>Independent Android apps that fix the little things your phone forgot to. No clutter, no ads, no selling your data.</p>
+      </section>
+
+      <div class="ticker" aria-hidden="true"><div class="track"></div></div>
+
+      <section>
+        <h2 class="apps-title">Apps</h2>
+        <div class="apps">
+          <a class="app" href="/phonelimit/">
+            <img src="phonelimit/icon.webp" alt="">
+            <div>
+              <h3>PhoneLimit</h3>
+              <p>Set a time limit before you open an app. Stop doomscrolling before it starts.</p>
+              <span class="go">Visit site →</span>
+            </div>
+          </a>
+          <div class="app soon">
+            <div class="ph">+</div>
+            <div>
+              <h3>Next app</h3>
+              <p>In the works.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <span>© 2026 Built-in</span>
+        <a href="mailto:notbuiltin@gmail.com">notbuiltin@gmail.com</a>
+      </footer>
+    </div>
+  </main>
+
+  <script>
+  (() => {
+    // showroom rows: enough logos to cover twice the screen, so the -50% loop is seamless
+    const rows = [...document.querySelectorAll('.showroom .row')];
+    rows.forEach(row => {
+      const track = row.querySelector('.track');
+      for (let i = 0; i < 8; i++) {
+        const im = document.createElement('img');
+        im.src = 'builtin-logo.png'; im.alt = '';
+        track.appendChild(im);
+      }
+    });
+
+    // ticker words, doubled for the loop
+    const words = ['Built-in', 'PhoneLimit', 'Less scrolling', 'More living', 'Made for Android', 'No ads', 'No clutter', 'Privacy first'];
+    const ticker = document.querySelector('.ticker .track');
+    const once = words.map(w => `<span>${w}</span><i>✦</i>`).join('');
+    ticker.innerHTML = once + once;
+
+    // scrolling the page nudges the rows sideways, in opposite directions
+    let ticking = false;
+    addEventListener('scroll', () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const s = scrollY;
+        rows.forEach(r => r.style.transform = `translateX(${s * 0.35 * r.dataset.dir}px)`);
+        ticking = false;
+      });
+    }, { passive: true });
+  })();
+
+  (() => {
+    const showroom = document.querySelector('.showroom');
+    const intro  = document.getElementById('intro');
+    const top    = intro.querySelector('.half.top');
+    const bottom = intro.querySelector('.half.bottom');
+    const flash  = intro.querySelector('.flash');
+    const slit   = intro.querySelector('.slit');
+    const hint   = intro.querySelector('.skip-hint');
+    const page   = document.getElementById('page');
+
+    // timeline (ms)
+    const T = { sweepStart: 350, sweepEnd: 2050, flashEnd: 2450, slitStart: 2550, slitEnd: 2900, splitStart: 3000, splitEnd: 3900 };
+
+    const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+    const prog  = (t, a, b) => clamp((t - a) / (b - a));
+    const easeInOut = p => p < .5 ? 4*p*p*p : 1 - Math.pow(-2*p + 2, 3) / 2;
+    const easeOut   = p => 1 - Math.pow(1 - p, 3);
+
+    let start, raf, offset = 0;
+
+    function frame(now) {
+      if (start === undefined) start = now;
+      const t = now - start + offset;
+      const w = innerWidth, h = innerHeight, vmin = Math.min(w, h), vmax = Math.max(w, h);
+
+      // 1. flashlight sweeps across the word
+      const s = easeInOut(prog(t, T.sweepStart, T.sweepEnd));
+      const x = w * (-0.1 + 1.0 * s);
+      const y = h * 0.5 + Math.sin(s * Math.PI * 2.2) * vmin * 0.06;
+
+      // 2. light snaps fully on, beam lands on center
+      const f = easeOut(prog(t, T.sweepEnd, T.flashEnd));
+      const cx = x + (w / 2 - x) * f;
+      const cy = y + (h / 2 - y) * f;
+      const r  = vmin * 0.18 + (vmax * 1.6) * f;
+      intro.style.setProperty('--x', cx + 'px');
+      intro.style.setProperty('--y', cy + 'px');
+      intro.style.setProperty('--r', r + 'px');
+      intro.style.setProperty('--b', (1 - f).toFixed(3));
+
+      const fl = t < T.sweepEnd ? 0 : Math.sin(prog(t, T.sweepEnd, T.flashEnd) * Math.PI);
+      flash.style.opacity = (fl * 0.22).toFixed(3);
+
+      // 3. a hairline of light cuts the screen
+      const sl = easeOut(prog(t, T.slitStart, T.slitEnd));
+      const slitFade = 1 - prog(t, T.splitStart, T.splitStart + 300);
+      slit.style.transform = `scaleX(${sl})`;
+      slit.style.opacity = (sl * slitFade).toFixed(3);
+
+      // 4. halves part and reveal the page
+      const sp = easeInOut(prog(t, T.splitStart, T.splitEnd));
+      top.style.transform    = `translateY(${-sp * 52}vh)`;
+      bottom.style.transform = `translateY(${sp * 52}vh)`;
+      hint.style.opacity = 1 - prog(t, T.sweepEnd, T.flashEnd);
+
+      if (t >= T.splitStart && !page.classList.contains('shown')) {
+        page.classList.add('shown');
+        showroom.classList.add('shown');
+      }
+
+      if (t < T.splitEnd) raf = requestAnimationFrame(frame);
+      else finish();
+    }
+
+    function finish() {
+      intro.hidden = true;
+      document.body.classList.remove('intro-running');
+    }
+
+    function play() {
+      cancelAnimationFrame(raf);
+      start = undefined; offset = 0;
+      page.classList.remove('shown');
+      showroom.classList.remove('shown');
+      intro.hidden = false;
+      document.body.classList.add('intro-running');
+      top.style.transform = bottom.style.transform = '';
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) offset = T.splitStart;
+      raf = requestAnimationFrame(frame);
+    }
+
+    function skip() {
+      if (intro.hidden || start === undefined) return;
+      const t = performance.now() - start + offset;
+      if (t < T.splitStart) offset += T.splitStart - t;
+    }
+
+    intro.addEventListener('click', skip);
+    addEventListener('keydown', e => { if (!intro.hidden) skip(); });
+
+    const img = new Image();
+    img.onload = img.onerror = play;
+    img.src = 'builtin-logo.png';
+  })();
+  </script>
+</body>
+</html>
