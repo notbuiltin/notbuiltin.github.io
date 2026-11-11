@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
   <title>You're invited to PhoneLimit</title>
-  <meta name="description" content="A friend invited you to PhoneLimit. Compare screen time and keep each other on track." />
+  <meta name="description" content="A friend invited you to their room on PhoneLimit. Compare screen time and keep each other on track." />
   <link rel="icon" href="icon.webp" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -41,6 +41,7 @@
     }
     .btn-primary { background: var(--green); color: #fff; }
     .btn-secondary { background: transparent; color: var(--light); border: 1px solid var(--border); }
+    .hint { margin-bottom: 4px; font-size: 0.8rem; color: var(--gray); }
     .steps { margin-top: 26px; text-align: left; color: var(--gray); font-size: 0.92rem; }
     .steps li { margin: 6px 0 6px 20px; }
     .foot { margin-top: 24px; font-size: 0.8rem; color: var(--gray); }
@@ -52,23 +53,24 @@
   <meta property="og:site_name" content="PhoneLimit" />
   <meta property="og:url" content="https://notbuiltin.github.io/phonelimit/invite" />
   <meta property="og:title" content="You're invited to PhoneLimit" />
-  <meta property="og:description" content="A friend invited you. Compare screen time and streaks, and keep each other on track." />
+  <meta property="og:description" content="A friend invited you to their room. Compare screen time and streaks, and keep each other on track." />
   <meta property="og:image" content="https://notbuiltin.github.io/phonelimit/og.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="You're invited to PhoneLimit" />
-  <meta name="twitter:description" content="A friend invited you. Compare screen time and streaks, and keep each other on track." />
+  <meta name="twitter:description" content="A friend invited you to their room. Compare screen time and streaks, and keep each other on track." />
   <meta name="twitter:image" content="https://notbuiltin.github.io/phonelimit/og.jpg" />
 </head>
 <body>
   <main class="card">
     <img class="logo" src="icon.webp" alt="PhoneLimit" />
     <h1 id="title">You're invited to PhoneLimit</h1>
-    <p class="lead" id="lead">A friend wants to compare screen time with you and keep each other on track.</p>
+    <p class="lead" id="lead">A friend invited you to their room. Compare screen time and keep each other on track.</p>
 
     <div id="withCode" hidden>
       <div class="code" id="code"></div>
+      <p class="hint" id="valid">Valid for 48 hours.</p>
       <button class="btn btn-secondary" id="copy" type="button">Copy code</button>
     </div>
 
@@ -78,8 +80,8 @@
 
     <ol class="steps" id="steps">
       <li id="s1">Install PhoneLimit from Google Play.</li>
-      <li id="s2">Open the app and go to Friends → Enter Code.</li>
-      <li id="s3">Enter the code above to add your friend.</li>
+      <li id="s2">Open the app and go to Rooms → Join with Code.</li>
+      <li id="s3">Enter the code above to join the room.</li>
     </ol>
 
     <p class="foot"><a href="privacy.html" id="privacy">Privacy</a></p>
@@ -91,19 +93,19 @@
       var tr = (navigator.language || "").toLowerCase().indexOf("tr") === 0;
       var t = tr ? {
         title: "PhoneLimit'e davet edildin",
-        lead: "Bir arkadaşın ekran süresini seninle karşılaştırmak ve birbirinize destek olmak istiyor.",
+        lead: "Bir arkadaşın seni odasına davet etti. Ekran sürelerinizi karşılaştırın ve birbirinize destek olun.",
         copy: "Kodu kopyala", copied: "Kopyalandı ✓",
         open: "PhoneLimit'te aç", play: "Google Play'den PhoneLimit'i indir",
         s1: "PhoneLimit'i Google Play'den yükle.",
-        s2: "Uygulamayı aç, Arkadaşlar → Kod Gir bölümüne git.",
-        s3: "Yukarıdaki kodu girerek arkadaşını ekle.",
-        site: "PhoneLimit'i keşfet", privacy: "Gizlilik", lang: "tr"
+        s2: "Uygulamayı aç, Odalar → Kodla Katıl bölümüne git.",
+        s3: "Yukarıdaki kodu girerek odaya katıl.",
+        valid: "48 saat geçerli.", site: "PhoneLimit'i keşfet", privacy: "Gizlilik", lang: "tr"
       } : {
         copy: "Copy code", copied: "Copied ✓",
         open: "Open in PhoneLimit", play: "Get PhoneLimit on Google Play", lang: "en"
       };
       document.documentElement.lang = t.lang;
-      ["title", "lead", "s1", "s2", "s3", "site", "privacy"].forEach(function (id) {
+      ["title", "lead", "s1", "s2", "s3", "valid", "site", "privacy"].forEach(function (id) {
         if (t[id]) document.getElementById(id).textContent = t[id];
       });
       document.getElementById("play").textContent = t.play;
