@@ -140,7 +140,7 @@
 </header>
 
 <main>
-  <p class="meta">Last updated: <span style="color: var(--coral);">September 12, 2026</span> &nbsp;·&nbsp; Version 1.0</p>
+  <p class="meta">Last updated: <span style="color: var(--coral);">November 11, 2026</span> &nbsp;·&nbsp; Version 1.1</p>
 
   <div class="highlight">
     <p>PhoneLimit respects your privacy. This policy explains what data the app collects, why, and how it is protected.</p>
@@ -154,10 +154,9 @@
   <h2>2. Data We Collect</h2>
 
   <div class="card">
-    <div class="card-title">Processed on your device (never sent to the cloud)</div>
+    <div class="card-title">Stays on your device (never sent to the cloud)</div>
     <ul>
-      <li>App usage statistics (which app is used and for how long)</li>
-      <li>Daily / weekly screen time summaries</li>
+      <li>Your detailed app usage history (which app is used, when, and for how long) and your daily screen time totals. Only the summaries described in the next card are uploaded, and only if you use rooms</li>
       <li>The app time limits you set</li>
       <li>Family mode pattern lock (stored as a SHA-256 hash, never as plain text)</li>
       <li>Backup PIN (stored as a SHA-256 hash)</li>
@@ -168,10 +167,12 @@
   <div class="card">
     <div class="card-title">Sent to the cloud (Firebase)</div>
     <ul>
-      <li><strong>Firebase Authentication:</strong> email address and secure authentication (for the friends and family mode features)</li>
-      <li><strong>Firestore:</strong> friendship connections, invite codes, and profile info shared with your friends: display name, weekly average screen time, category breakdown (social / entertainment / finance / other), streak, and, if you enable app sharing, your most-used apps</li>
-      <li><strong>Firebase Analytics:</strong> anonymous app usage events (which screens are viewed, and whether a subscription was started), plus the campaign your install came from if you arrived through one of our links</li>
-      <li><strong>Firebase Crashlytics:</strong> crash and error reports: the stack trace, your device model and Android version, and whether family mode and Pro were active, so we can find what broke. No usage data and no personal information is attached.</li>
+      <li><strong>Firebase Authentication:</strong> when you use rooms, the app signs you in anonymously and gets a random Firebase user ID. No email address or password is needed for this. The ID is used to tie your room memberships and profile summary to you. Family mode does not create an account: if you ask for a pattern reset link, the email address you entered is sent to Firebase only to deliver that one email. The address is also kept encrypted on your device.</li>
+      <li><strong>Firestore, your profile summary:</strong> once you set a display name and use rooms, the app uploads a summary automatically, about once a day while the app runs in the background, and again when you change your name or sharing setting. The summary contains: your display name, your average daily screen time over the last 7 days, your current streak, a category breakdown in minutes (social / entertainment / finance / other), the sharing level you chose, and the time of the last update. With the default sharing level (total only) that is all. If you turn on "Share app details", it also includes the app names, package names and minutes of your most-used apps. Your profile summary is stored in our cloud database so people in your rooms can see it. It is not published on the web or indexed.</li>
+      <li><strong>Firestore, rooms:</strong> the rooms you create or join (room name, icon and color, owner, and the list of members with their join time), and the invite codes you generate (valid for 48 hours).</li>
+      <li><strong>Firebase Analytics:</strong> app events, not tied to your name or email: which screens are viewed, setup steps completed, whether a subscription was started, and whether the floating time pill was shown or hidden with a short reason code (never which app you were in, only whether it was a web browser), plus aggregate smoothness counts for the pill such as how many frames were slow. Analytics also records your subscription tier (free or Pro), the release channel of your build, and the source and campaign of your install if you arrived through one of our links. Firebase also assigns your installation a random Firebase installation ID, which Analytics uses to tell installs apart. The app does not use the Android advertising ID.</li>
+      <li><strong>Firebase Crashlytics:</strong> crash and error reports: the stack trace, your device maker, model and Android version, your subscription tier, the release channel, and whether family mode was active, so we can find what broke. No screen time or app usage data is attached.</li>
+      <li><strong>Firebase Remote Config and App Check:</strong> the app downloads on/off switches and settings from us (for example to turn a feature off if it misbehaves). It also uses Play Integrity through Firebase App Check to confirm that requests come from the genuine app. Both use the Firebase installation ID and standard device and app information that Google processes for these services.</li>
     </ul>
   </div>
 
@@ -189,7 +190,7 @@
   <ul>
     <li>Tracking screen time and showing statistics</li>
     <li>Running the app blocking feature</li>
-    <li>Friend leaderboard and social features</li>
+    <li>Room leaderboards and social features (showing your profile summary to people in your rooms)</li>
     <li>Family mode access control</li>
     <li>Verifying subscription status</li>
     <li>Diagnosing crashes and errors so we can fix them</li>
@@ -199,7 +200,7 @@
   <h2>4. Third-Party Services</h2>
   <p>PhoneLimit uses the following Google services, each governed by its own privacy policy:</p>
   <ul>
-    <li><a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase (Authentication, Firestore, Analytics, Crashlytics)</a></li>
+    <li><a href="https://firebase.google.com/support/privacy" target="_blank" rel="noopener">Firebase (Authentication, Firestore, Analytics, Crashlytics, Remote Config, App Check with Play Integrity)</a></li>
     <li><a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google Play Billing</a></li>
   </ul>
 
@@ -217,7 +218,7 @@
 
   <div class="card">
     <div class="card-title">PACKAGE_USAGE_STATS</div>
-    <p style="margin:0;color:var(--light);font-size:0.9rem;">Required to measure how much time you spend in each app. The detailed data is processed on your device; only aggregated summaries (weekly average, category breakdown, most-used apps) are shared if you use the friends feature.</p>
+    <p style="margin:0;color:var(--light);font-size:0.9rem;">Required to measure how much time you spend in each app. The detailed data is processed on your device; only the aggregated summary described in section 2 (7-day average, category breakdown, and optionally most-used apps) is uploaded, and only if you use rooms.</p>
   </div>
   <div class="card">
     <div class="card-title">SYSTEM_ALERT_WINDOW</div>
@@ -237,9 +238,10 @@
   <p>PhoneLimit is not directed at children under 13. The Family Mode feature is designed for parents to manage their child's device; no personal data about children is collected in this process.</p>
 
   <!-- 8 -->
-  <h2>8. Your Rights Over Your Data</h2>
+  <h2>8. Retention and Your Rights Over Your Data</h2>
   <ul>
-    <li><strong>Account deletion:</strong> you can request permanent deletion of your Firebase account and Firestore data at any time. See <a href="delete-account.html">Account &amp; Data Deletion</a></li>
+    <li><strong>Retention:</strong> a profile summary is deleted automatically 90 days after its last update (the app refreshes it about daily while you use rooms). Room invite codes stop working after 48 hours. Room memberships and rooms are kept until you leave or delete your data. Analytics and Crashlytics data is kept according to Google's Firebase retention settings.</li>
+    <li><strong>Account deletion:</strong> you can delete your Firebase account and Firestore data at any time from the app, or request it by email. A room itself stays for its remaining members. See <a href="delete-account.html">Account &amp; Data Deletion</a></li>
     <li><strong>Local data deletion:</strong> all local data is automatically removed when you uninstall the app</li>
     <li><strong>Data access:</strong> contact us to find out what data is held about you</li>
   </ul>
